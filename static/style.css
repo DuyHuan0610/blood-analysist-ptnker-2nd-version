@@ -1,0 +1,146 @@
+/* ===== BIẾN MÀU SẮC CHỦ ĐẠO ===== */
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --bg-light: #f8fafc;
+    --white: #ffffff;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    height: 100vh;
+    overflow: hidden; /* Quan trọng: Ngăn trang web cuộn toàn bộ */
+    background-image: url("images/bg.jpg");
+    background-size: cover;      
+    background-position: center; 
+}
+
+/* ===== HEADER ===== */
+header {
+    background: rgba(11, 94, 215, 0.85); 
+    backdrop-filter: blur(10px);         
+    -webkit-backdrop-filter: blur(10px); 
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px 0 rgba(31, 38, 135, 0.2); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18); 
+    height: 65px; 
+    box-sizing: border-box;
+}
+header h1 { margin: 0; font-size: 24px; }
+
+/* ===== DASHBOARD LAYOUT (2 CỘT) ===== */
+.dashboard-layout {
+    display: flex;
+    height: calc(100vh - 65px); 
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 30px;
+    box-sizing: border-box;
+}
+
+/* CỘT TRÁI: FORM */
+.left-panel {
+    width: 380px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding: 20px;
+    border-radius: 16px;
+}
+
+/* CỘT PHẢI: KẾT QUẢ */
+.right-panel {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Ẩn bớt thanh cuộn cho gọn */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
+
+/* ===== HIỆU ỨNG KÍNH MỜ CHUNG ===== */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* ===== CHỌN CHẾ ĐỘ ===== */
+.mode-select { text-align: center; margin-bottom: 20px; }
+.mode-select button {
+    padding: 10px 15px; margin: 0 5px; font-size: 14px; font-weight: 600;
+    cursor: pointer; border-radius: 30px; border: 2px solid var(--primary-color); transition: all 0.3s;
+}
+.mode-select button.active { background-color: var(--primary-color); color: white; }
+.mode-select button.inactive { background-color: transparent; color: var(--primary-color); }
+
+/* ===== FORM NHẬP DỮ LIỆU ===== */
+.table-box {
+    background: rgba(255, 255, 255, 0.75); 
+    border: 1px solid rgba(255, 255, 255, 0.6); 
+    padding: 15px 20px;
+    border-radius: 12px; 
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.05);
+}
+
+.table-box h3 { margin-top: 0; color: var(--primary-color); border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; font-size: 16px; }
+
+.row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.row span { font-weight: 500; font-size: 14px; }
+.row input, .row select {
+    width: 140px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; outline: none; background: rgba(255,255,255,0.9); box-sizing: border-box;
+}
+.row input:focus, .row select:focus { border-color: var(--primary-color); }
+
+/* ===== CÁC NÚT BẤM ===== */
+.action-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+
+.analyze-btn {
+    padding: 15px; font-size: 16px; font-weight: bold; background-color: var(--success-color);
+    color: white; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(25,135,84,0.3);
+}
+.analyze-btn:hover { background-color: #146c43; transform: translateY(-2px); }
+.analyze-btn:disabled { background-color: #6c757d; transform: none; cursor: not-allowed; }
+
+.btn-sample {
+    padding: 10px; font-size: 14px; font-weight: bold; background-color: transparent; color: var(--primary-color);
+    border: 2px solid var(--primary-color); border-radius: 8px; cursor: pointer; transition: 0.2s;
+}
+.btn-sample:hover { background-color: var(--primary-color); color: white; }
+
+/* ===== KHU VỰC KẾT QUẢ CỘT PHẢI ===== */
+.result-container {
+    background: rgba(231, 243, 255, 0.75); 
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    width: 100%;
+    max-width: 750px;
+    padding: 30px;
+    border-radius: 16px;
+    border-top: 6px solid var(--primary-color);
+    box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.1);
+}
+
+.conclusion-box { 
+    margin-top: 20px; 
+    padding: 20px; 
+    background: #eef7ff; 
+    border-left: 6px solid #007bff; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+}
+.conclusion-box:hover { transform: translateY(-3px); }

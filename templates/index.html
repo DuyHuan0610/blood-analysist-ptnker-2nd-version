@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Blood Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>💊 Hệ Thống Phân Tích Mẫu Xét Nghiệm AI 💉</h1>
+</header>
+
+<div class="dashboard-layout">
+    <div class="left-panel glass-panel">
+        <div class="mode-select">
+            <button id="manualBtn" class="active">Nhập chỉ số thủ công</button>
+            <button id="fileBtn" class="inactive" onclick="alert('Tính năng đang phát triển!')">Upload ảnh mẫu</button>
+        </div>
+
+        <form id="analysisForm">
+            <div class="table-box">
+                <h3>👤 Bệnh nhân & Tiểu Cầu</h3>
+                <div class="row"><span>Tuổi</span><input type="number" id="Age" required placeholder="Năm"></div>
+                <div class="row"><span>Giới tính</span>
+                    <select id="Gender">
+                        <option value="1">Nam</option>
+                        <option value="0">Nữ</option>
+                    </select>
+                </div>
+                <div class="row"><span>PLT</span><input type="number" id="PLT" step="1" required placeholder="Số lượng TC"></div>
+            </div>
+
+            <div class="table-box">
+                <h3>🔴 Dòng Hồng Cầu</h3>
+                <div class="row"><span>HGB</span><input type="number" id="HGB" step="0.1" required placeholder="Huyết sắc tố"></div>
+                <div class="row"><span>RBC</span><input type="number" id="RBC" step="0.1" required placeholder="Số lượng HC"></div>
+                <div class="row"><span>HCT</span><input type="number" id="HCT" step="0.1" required placeholder="Dung tích HC"></div>
+                <div class="row"><span>MCV</span><input type="number" id="MCV" step="0.1" required placeholder="Kích thước TB"></div>
+                <div class="row"><span>MCH</span><input type="number" id="MCH" step="0.1" required placeholder="Lượng HST TB"></div>
+                <div class="row"><span>MCHC</span><input type="number" id="MCHC" step="0.1" required placeholder="Nồng độ HST"></div>
+                <div class="row"><span>RDW</span><input type="number" id="RDW" step="0.1" required placeholder="Phân bố HC"></div>
+            </div>
+
+            <div class="table-box">
+                <h3>⚪ Dòng Bạch Cầu</h3>
+                <div class="row"><span>WBC</span><input type="number" id="WBC" step="0.1" required placeholder="Tổng bạch cầu"></div>
+                <div class="row"><span>NEUT (%)</span><input type="number" id="Neutrophils" step="0.1" required placeholder="% Trung tính"></div>
+                <div class="row"><span>LYM (%)</span><input type="number" id="Lymphocytes" step="0.1" required placeholder="% Lympho"></div>
+                <div class="row"><span>MONO (%)</span><input type="number" id="Monocytes" step="0.1" required placeholder="% Mono"></div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" class="btn-sample" onclick="fillRandom()">🪄 Điền ca bệnh mẫu</button>
+                <button type="button" class="analyze-btn" id="btnSubmit" onclick="startAnalysis()">🚀 Phân Tích Bằng AI</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="right-panel">
+        <div id="resultArea" class="result-container" style="display: block;">
+            <h3 style="margin-top:0; text-align: center; color: #0d6efd; font-size: 24px;">📊 Báo Cáo Biện Luận AI</h3>
+            
+            <div id="loading" style="display: none; text-align: center; padding: 40px;">
+                <h3 style="color: #0d6efd;">⏳ Hệ thống đang trích xuất dữ liệu lâm sàng...</h3>
+            </div>
+
+            <div id="aiConclusions">
+                <div style="text-align: center; color: #666; padding: 50px;">
+                    <h1 style="font-size: 40px; opacity: 0.3;">🔬</h1>
+                    <p>Hãy nhập đủ 14 chỉ số bên trái và bấm phân tích để xem AI biện luận.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 25px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 15px; text-align: center;">
+                <p style="color: #c0392b; font-style: italic; font-size: 0.85rem; margin: 0;">
+                    ⚠️ <strong>Miễn trừ trách nhiệm:</strong> Hệ thống AI chỉ mang tính chất hỗ trợ quyết định lâm sàng.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function fillRandom() {
+        document.getElementById('Age').value = 45;
+        document.getElementById('Gender').value = 1;
+        document.getElementById('PLT').value = 75;
+        document.getElementById('HGB').value = 9.5;
+        document.getElementById('RBC').value = 3.2;
+        document.getElementById('HCT').value = 28.5;
+        document.getElementById('MCV').value = 72.0;
+        document.getElementById('MCH').value = 24.5;
+        document.getElementById('MCHC').value = 31.0;
+        document.getElementById('RDW').value = 16.5;
+        document.getElementById('WBC').value = 14.2;
+        document.getElementById('Neutrophils').value = 82.0;
+        document.getElementById('Lymphocytes').value = 12.0;
+        document.getElementById('Monocytes').value = 5.0;
+    }
+
+    async function startAnalysis() {
+        const btn = document.getElementById("btnSubmit");
+        const conclusionsBox = document.getElementById("aiConclusions");
+        const loading = document.getElementById("loading");
+
+        const payload = {
+            Age: parseInt(document.getElementById('Age').value) || 0,
+            Gender: parseInt(document.getElementById('Gender').value) || 0,
+            HGB: parseFloat(document.getElementById('HGB').value) || 0,
+            RBC: parseFloat(document.getElementById('RBC').value) || 0,
+            HCT: parseFloat(document.getElementById('HCT').value) || 0,
+            MCV: parseFloat(document.getElementById('MCV').value) || 0,
+            MCH: parseFloat(document.getElementById('MCH').value) || 0,
+            MCHC: parseFloat(document.getElementById('MCHC').value) || 0,
+            RDW: parseFloat(document.getElementById('RDW').value) || 0,
+            WBC: parseFloat(document.getElementById('WBC').value) || 0,
+            Neutrophils: parseFloat(document.getElementById('Neutrophils').value) || 0,
+            Lymphocytes: parseFloat(document.getElementById('Lymphocytes').value) || 0,
+            Monocytes: parseFloat(document.getElementById('Monocytes').value) || 0,
+            PLT: parseFloat(document.getElementById('PLT').value) || 0
+        };
+
+        btn.innerText = "⏳ Đang phân tích...";
+        btn.disabled = true;
+        conclusionsBox.style.display = 'none';
+        loading.style.display = 'block';
+
+        try {
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error("Mất kết nối với AI Server");
+            const data = await response.json();
+
+            loading.style.display = 'none';
+            conclusionsBox.style.display = 'block';
+            conclusionsBox.innerHTML = ""; 
+
+            if (data.length === 0) {
+                conclusionsBox.innerHTML = `
+                    <div class="conclusion-box" style="border-left-color: var(--success-color); background: rgba(240, 253, 244, 0.9);">
+                        <h4 style="color: var(--success-color); margin: 0 0 10px 0;">✅ Các chỉ số ổn định</h4>
+                        <p style="margin:0;">Hệ thống AI không phát hiện rủi ro bệnh lý cao.</p>
+                    </div>`;
+            } else {
+                data.forEach((item, index) => {
+                    const isPrimary = index === 0;
+                    const borderColor = isPrimary ? "#dc3545" : "#fd7e14"; 
+                    const bgLight = isPrimary ? "rgba(255,245,245,0.8)" : "rgba(255,249,240,0.8)";
+                    
+                    const factors = item.impact_factors.map(f => `<b style="color:${borderColor}; background: rgba(255,255,255,0.7); padding: 2px 6px; border-radius: 4px; border: 1px solid #ccc;">${f.name}: ${f.val}</b>`).join(' ');
+
+                    const boxHtml = `
+                        <div class="conclusion-box" style="border-left-color: ${borderColor}; background: ${bgLight};">
+                            <h4 style="color: ${borderColor}; margin-top: 0; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px;">
+                                <span>${item.category}</span>
+                                <span style="background: ${borderColor}; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;">Xác suất: ${item.probability}</span>
+                            </h4>
+                            <p style="margin-bottom: 10px; line-height: 1.6;"><strong>⚠️ Yếu tố nhận diện:</strong> <br>${factors}</p>
+                            <p style="margin-bottom: 10px; line-height: 1.5;"><strong>⚙️ Cơ chế:</strong> ${item.mechanism}</p>
+                            <p style="margin-bottom: 15px; line-height: 1.5;"><strong>🦠 Nguyên nhân:</strong> ${item.potential_causes}</p>
+                            
+                            <div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 8px; border: 1px dashed ${borderColor};">
+                                <strong style="color: var(--primary-color);">📚 Dẫn chứng (${item.scientific_evidence.source}):</strong>
+                                <i style="display: block; margin-top: 5px; color: #444;">"${item.scientific_evidence.quote}"</i>
+                            </div>
+                        </div>
+                    `;
+                    conclusionsBox.innerHTML += boxHtml;
+                });
+            }
+        } catch (error) {
+            alert("Lỗi: " + error.message);
+            loading.style.display = 'none';
+            conclusionsBox.style.display = 'block';
+        } finally {
+            btn.innerText = "🚀 Phân Tích Bằng AI";
+            btn.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>
